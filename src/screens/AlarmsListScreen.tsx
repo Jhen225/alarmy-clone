@@ -17,6 +17,32 @@ import { Button } from '../components/Button';
 import { useFocusEffect } from '@react-navigation/native';
 import { cancelAlarmNotification, scheduleAlarmNotification } from '../alarms/scheduler';
 
+// Helper to format 24h time string to 12h display format
+function formatTime12h(timeHHmm: string): string {
+  const [h, m] = timeHHmm.split(':').map(Number);
+  const hour24 = h || 0;
+  const minute = m || 0;
+
+  let hour12: number;
+  let period: string;
+
+  if (hour24 === 0) {
+    hour12 = 12;
+    period = 'AM';
+  } else if (hour24 === 12) {
+    hour12 = 12;
+    period = 'PM';
+  } else if (hour24 > 12) {
+    hour12 = hour24 - 12;
+    period = 'PM';
+  } else {
+    hour12 = hour24;
+    period = 'AM';
+  }
+
+  return `${hour12}:${String(minute).padStart(2, '0')} ${period}`;
+}
+
 type Props = NativeStackScreenProps<RootStackParamList, 'AlarmsList'>;
 
 export const AlarmsListScreen: React.FC<Props> = ({ navigation }) => {
@@ -57,8 +83,8 @@ export const AlarmsListScreen: React.FC<Props> = ({ navigation }) => {
       >
         <Card>
           <View style={styles.alarmRow}>
-            <View>
-              <Text style={styles.time}>{item.timeHHmm}</Text>
+            <View style={styles.alarmInfo}>
+              <Text style={styles.time}>{formatTime12h(item.timeHHmm)}</Text>
               <Text style={styles.label}>{item.label || 'No label'}</Text>
               <Text style={styles.meta}>
                 {item.repeatDays.length === 0 ? 'One-off' : 'Repeats'} ·{' '}
@@ -141,8 +167,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  alarmInfo: {
+    flex: 1,
+    marginRight: theme.spacing.md,
+  },
   time: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '700',
     color: theme.colors.text,
   },

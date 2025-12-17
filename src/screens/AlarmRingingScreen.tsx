@@ -9,6 +9,32 @@ import { Button } from '../components/Button';
 import { scheduleSnooze } from '../alarms/scheduler';
 import { startAlarmLoop } from '../alarms/sound';
 
+// Helper to format 24h time string to 12h display format
+function formatTime12h(timeHHmm: string): string {
+  const [h, m] = timeHHmm.split(':').map(Number);
+  const hour24 = h || 0;
+  const minute = m || 0;
+
+  let hour12: number;
+  let period: string;
+
+  if (hour24 === 0) {
+    hour12 = 12;
+    period = 'AM';
+  } else if (hour24 === 12) {
+    hour12 = 12;
+    period = 'PM';
+  } else if (hour24 > 12) {
+    hour12 = hour24 - 12;
+    period = 'PM';
+  } else {
+    hour12 = hour24;
+    period = 'AM';
+  }
+
+  return `${hour12}:${String(minute).padStart(2, '0')} ${period}`;
+}
+
 type Props = NativeStackScreenProps<RootStackParamList, 'AlarmRinging'>;
 
 export const AlarmRingingScreen: React.FC<Props> = ({ route, navigation }) => {
@@ -76,7 +102,7 @@ export const AlarmRingingScreen: React.FC<Props> = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.ringingText}>Wake mission ready</Text>
-      <Text style={styles.time}>{alarm.timeHHmm}</Text>
+      <Text style={styles.time}>{formatTime12h(alarm.timeHHmm)}</Text>
       <Text style={styles.label}>{alarm.label}</Text>
       <Text style={styles.elapsed}>Ringing for {minutes}:{seconds}</Text>
 

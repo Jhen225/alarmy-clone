@@ -21,6 +21,50 @@ import {
   cancelAlarmNotification,
   scheduleAlarmNotification,
 } from '../alarms/scheduler';
+import { TimeSpinner } from '../components/TimeSpinner';
+
+// Helper to convert 24h time string to 12h format
+function parseTimeHHmm(timeHHmm: string): {
+  hour: number;
+  minute: number;
+  period: 'AM' | 'PM';
+} {
+  const [h, m] = timeHHmm.split(':').map(Number);
+  const hour24 = h || 0;
+  const minute = m || 0;
+
+  let hour12: number;
+  let period: 'AM' | 'PM';
+
+  if (hour24 === 0) {
+    hour12 = 12;
+    period = 'AM';
+  } else if (hour24 === 12) {
+    hour12 = 12;
+    period = 'PM';
+  } else if (hour24 > 12) {
+    hour12 = hour24 - 12;
+    period = 'PM';
+  } else {
+    hour12 = hour24;
+    period = 'AM';
+  }
+
+  return { hour: hour12, minute, period };
+}
+
+// Helper to convert 12h format back to 24h time string
+function formatTimeHHmm(hour12: number, minute: number, period: 'AM' | 'PM'): string {
+  let hour24: number;
+
+  if (period === 'AM') {
+    hour24 = hour12 === 12 ? 0 : hour12;
+  } else {
+    hour24 = hour12 === 12 ? 12 : hour12 + 12;
+  }
+
+  return `${String(hour24).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+}
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AlarmForm'>;
 
@@ -111,13 +155,14 @@ export const AlarmFormScreen: React.FC<Props> = ({ navigation, route }) => {
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.label}>Time (HH:mm)</Text>
-        <TextInput
-          style={styles.input}
-          value={alarm.timeHHmm}
-          onChangeText={text => update({ timeHHmm: text })}
-          placeholder="07:00"
-          placeholderTextColor={theme.colors.textMuted}
+        <Text style={styles.label}>Time</Text>
+        <TimeSpinner
+          hour={parseTimeHHmm(alarm.timeHHmm).hour}
+          minute={parseTimeHHmm(alarm.timeHHmm).minute}
+          period={parseTimeHHmm(alarm.timeHHmm).period}
+          onTimeChange={(hour, minute, period) => {
+            update({ timeHHmm: formatTimeHHmm(hour, minute, period) });
+          }}
         />
 
         <Text style={styles.label}>Label</Text>
@@ -255,6 +300,8 @@ const styles = StyleSheet.create({
   weekButton: {
     flex: 1,
     marginHorizontal: 2,
+    paddingHorizontal: 0,
+    minWidth: 36,
   },
   diffButton: {
     flex: 1,
