@@ -10,13 +10,14 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation';
 import { theme } from '../theme';
-import { Alarm, AlarmDifficulty } from '../models/Alarm';
+import { Alarm, AlarmDifficulty, time24To12, time12To24 } from '../models/Alarm';
 import {
   deleteAlarm,
   getAlarmById,
   upsertAlarm,
 } from '../storage/alarmsStorage';
 import { Button } from '../components/Button';
+import { TimeSpinner } from '../components/TimeSpinner';
 import {
   cancelAlarmNotification,
   scheduleAlarmNotification,
@@ -111,13 +112,13 @@ export const AlarmFormScreen: React.FC<Props> = ({ navigation, route }) => {
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.label}>Time (HH:mm)</Text>
-        <TextInput
-          style={styles.input}
-          value={alarm.timeHHmm}
-          onChangeText={text => update({ timeHHmm: text })}
-          placeholder="07:00"
-          placeholderTextColor={theme.colors.textMuted}
+        <Text style={styles.label}>Time</Text>
+        <TimeSpinner
+          {...time24To12(alarm.timeHHmm)}
+          onTimeChange={(hour12, minute, ampm) => {
+            const timeHHmm = time12To24(hour12, minute, ampm);
+            update({ timeHHmm });
+          }}
         />
 
         <Text style={styles.label}>Label</Text>
@@ -251,10 +252,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: theme.spacing.sm,
+    gap: theme.spacing.xs,
   },
   weekButton: {
     flex: 1,
-    marginHorizontal: 2,
+    minWidth: 35,
+    paddingHorizontal: theme.spacing.xs,
+    paddingVertical: theme.spacing.sm,
   },
   diffButton: {
     flex: 1,

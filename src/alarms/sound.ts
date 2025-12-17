@@ -17,21 +17,28 @@ async function ensureAudioMode() {
 export async function startAlarmLoop() {
   try {
     await ensureAudioMode();
-    if (!sound) {
-      const { sound: created } = await Audio.Sound.createAsync(
-        // Simple remote sound so the example runs without bundling extra assets
-        {
-          uri: 'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg',
-        },
-        {
-          isLooping: true,
-          volume: 1.0,
-        },
-      );
-      sound = created;
+    if (sound) {
+      // Stop and unload existing sound first
+      await sound.stopAsync();
+      await sound.unloadAsync();
+      sound = null;
     }
+    
+    const { sound: created } = await Audio.Sound.createAsync(
+      // Simple remote sound so the example runs without bundling extra assets
+      {
+        uri: 'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg',
+      },
+      {
+        isLooping: true,
+        volume: 1.0,
+        shouldPlay: false, // We'll play it manually after setting up
+      },
+    );
+    sound = created;
 
     await sound.setIsLoopingAsync(true);
+    await sound.setVolumeAsync(1.0);
     await sound.playAsync();
   } catch (e) {
     console.warn('Failed to start alarm sound', e);
