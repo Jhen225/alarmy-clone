@@ -1,9 +1,2 @@
-import { Text, View } from "react-native";
-
-export const Alarms = () => {
-    return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={{ color: 'black' }}>Alarm View</Text>
-        </View>
-    )
-}
+// Deprecated placeholder file from the initial scaffold.
+// The new implementation lives in `AlarmsListScreen.tsx`.
