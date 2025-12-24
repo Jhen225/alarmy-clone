@@ -2400,20 +2400,20 @@ expo-application@~7.0.8:
   resolved "https://registry.npmjs.org/expo-application/-/expo-application-7.0.8.tgz"
   integrity sha512-qFGyxk7VJbrNOQWBbE09XUuGuvkOgFS9QfToaK2FdagM2aQ+x3CvGV2DuVgl/l4ZxPgIf3b/MNh9xHpwSwn74Q==
 
-expo-asset@~12.0.11:
-  version "12.0.11"
-  resolved "https://registry.npmjs.org/expo-asset/-/expo-asset-12.0.11.tgz"
-  integrity sha512-pnK/gQ5iritDPBeK54BV35ZpG7yeW5DtgGvJHruIXkyDT9BCoQq3i0AAxfcWG/e4eiRmTzAt5kNVYFJi48uo+A==
+expo-asset@*, expo-asset@~12.0.11:
+  version "12.0.12"
+  resolved "https://registry.npmjs.org/expo-asset/-/expo-asset-12.0.12.tgz"
+  integrity sha512-CsXFCQbx2fElSMn0lyTdRIyKlSXOal6ilLJd+yeZ6xaC7I9AICQgscY5nj0QcwgA+KYYCCEQEBndMsmj7drOWQ==
   dependencies:
     "@expo/image-utils" "^0.8.8"
-    expo-constants "~18.0.11"
+    expo-constants "~18.0.12"
 
-expo-av@~16.0.8:
-  version "16.0.8"
-  resolved "https://registry.npmjs.org/expo-av/-/expo-av-16.0.8.tgz"
-  integrity sha512-cmVPftGR/ca7XBgs7R6ky36lF3OC0/MM/lpgX/yXqfv0jASTsh7AYX9JxHCwFmF+Z6JEB1vne9FDx4GiLcGreQ==
+expo-audio@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.npmjs.org/expo-audio/-/expo-audio-1.1.1.tgz"
+  integrity sha512-CPCpJ+0AEHdzWROc0f00Zh6e+irLSl2ALos/LPvxEeIcJw1APfBa4DuHPkL4CQCWsVe7EnUjFpdwpqsEUWcP0g==
 
-expo-constants@~18.0.11, expo-constants@~18.0.12:
+expo-constants@~18.0.12:
   version "18.0.12"
   resolved "https://registry.npmjs.org/expo-constants/-/expo-constants-18.0.12.tgz"
   integrity sha512-WzcKYMVNRRu4NcSzfIVRD5aUQFnSpTZgXFrlWmm19xJoDa4S3/PQNi6PNTBRc49xz9h8FT7HMxRKaC8lr0gflA==

@@ -1,45 +1,36 @@
-import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
+import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
 
-let sound: Audio.Sound | null = null;
+let player: AudioPlayer | null = null;
 
 async function ensureAudioMode() {
-  await Audio.setAudioModeAsync({
-    allowsRecordingIOS: false,
-    staysActiveInBackground: true,
-    interruptionModeIOS: InterruptionModeIOS.DoNotMix,
-    playsInSilentModeIOS: true,
-    shouldDuckAndroid: true,
-    interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
-    playThroughEarpieceAndroid: false,
+  await setAudioModeAsync({
+    allowsRecording: false,
+    shouldPlayInBackground: true,
+    interruptionMode: 'doNotMix',
+    playsInSilentMode: true,
+    shouldRouteThroughEarpiece: false,
   });
 }
 
 export async function startAlarmLoop() {
   try {
     await ensureAudioMode();
-    if (sound) {
-      // Stop and unload existing sound first
-      await sound.stopAsync();
-      await sound.unloadAsync();
-      sound = null;
+    if (player) {
+      // Remove existing player first
+      player.remove();
+      player = null;
     }
-    
-    const { sound: created } = await Audio.Sound.createAsync(
-      // Simple remote sound so the example runs without bundling extra assets
+
+    player = createAudioPlayer(
       {
         uri: 'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg',
       },
-      {
-        isLooping: true,
-        volume: 1.0,
-        shouldPlay: false, // We'll play it manually after setting up
-      },
+      { updateInterval: 500 }
     );
-    sound = created;
 
-    await sound.setIsLoopingAsync(true);
-    await sound.setVolumeAsync(1.0);
-    await sound.playAsync();
+    player.loop = true;
+    player.volume = 1.0;
+    player.play();
   } catch (e) {
     console.warn('Failed to start alarm sound', e);
   }
@@ -47,14 +38,12 @@ export async function startAlarmLoop() {
 
 export async function stopAlarmLoop() {
   try {
-    if (sound) {
-      await sound.stopAsync();
-      await sound.unloadAsync();
-      sound = null;
+    if (player) {
+      player.pause();
+      player.remove();
+      player = null;
     }
   } catch (e) {
     console.warn('Failed to stop alarm sound', e);
   }
 }
-
-
